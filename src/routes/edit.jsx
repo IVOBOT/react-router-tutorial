@@ -2,11 +2,14 @@ import {
     Form, 
     useLoaderData,
     redirect,
+    useNavigate,
  } from "react-router-dom";
 import { getContact, updateContact } from "../contacts";
 
 export async function action({ request, params }) {
     const formData = await request.formData();
+    const firstName = formData.get("first");
+    const lastName = formData.get("last");
     const updates = Object.fromEntries(formData);
     await updateContact(params.contactId, updates);
     return redirect(`/contacts/${params.contactId}`);
@@ -18,6 +21,7 @@ export function loader({ params }) {
 
 export default function Edit() {
   const contact = useLoaderData();
+  const navigate = useNavigate();
 
   return (
     <Form method="post" id="contact-form">
@@ -34,7 +38,7 @@ export default function Edit() {
           placeholder="Last"
           aria-label="Last name"
           type="text"
-          name="last"
+          name="first"
           defaultValue={contact.last}
         />
       </p>
@@ -67,7 +71,9 @@ export default function Edit() {
       </label>
       <p>
         <button type="submit">Save</button>
-        <button type="button">Cancel</button>
+        <button type="button" onClick={() => {
+            navigate(-1);
+          }}>Cancel</button>
       </p>
     </Form>
   );
